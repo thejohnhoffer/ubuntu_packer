@@ -63,7 +63,7 @@ optional arguments:
 - Later, you can always power off the vm `VBoxManage controlvm $vm_name poweroff`
 
 - If you need to start over, delete the vm `VBoxManage unregistervm $vm_name --delete`
-    - And, delete the exported vm with `rm -rf ~/VirtualBox\ VMs/$vm_name_ovf`
+    - And, delete the exported vm with `rm -rf ~/VirtualBox\ VMs/$(vm_name)_ovf`
 
 Where `$vm_name` is the name of the VM including the number, ie `butterfly0`.
 
