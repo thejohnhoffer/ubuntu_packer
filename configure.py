@@ -6,7 +6,7 @@ import sys
 import os
 
 def configure(argv,os_types):
-    """Set environment variables with defaults.
+    """Makes two config files, then makes a virtual machine.
     Args
     -------
     argv : list
@@ -14,13 +14,14 @@ def configure(argv,os_types):
     """
 
     helps = {
-	'configure': 'Set environment variables',
+	'configure': 'Makes a VM with a shared path and ssh',
 	'data_path': 'Share data with vm from host path',
 	'ssh': 'port >1024 for ssh server (2222)',
-	'vm_name': 'name for vm, username, password (vm)',
-        'user': 'username: overrides the name (vm)',
-        'pass': 'password: overrides the name (vm)',
+	'vm_name': 'name for vm, username, password',
+        'user': 'username: overrides vm_name',
+        'pass': 'password: overrides vm_name',
         'os': 'Ubuntu or Ubuntu_64 (Ubuntu_64)',
+        'bash': 'Path to bash script to run when made',
         'cores': 'Number of processor cores (1)',
         'ram': 'Total megabytes of RAM (1024)',
     }
@@ -29,10 +30,11 @@ def configure(argv,os_types):
 			description= helps['configure'])
     parser.add_argument('vm_name', help= helps['vm_name'])
     parser.add_argument('data_path', help= helps['data_path'])
+    parser.add_argument('-o','--os', default='Ubuntu_64', help= helps['os'])
     parser.add_argument('-s','--ssh', default='2222', help= helps['ssh'])
     parser.add_argument('-r','--ram', default='1024', help= helps['ram'])
     parser.add_argument('-c','--cores', default='1', help= helps['cores'])
-    parser.add_argument('-o','--os', default='Ubuntu_64', help= helps['os'])
+    parser.add_argument('-b','--bash', default='', help= helps['bash'])
 
     # Set the default name for user and password
     parser.add_argument('-p','--pass', help= helps['pass'])
@@ -75,15 +77,14 @@ if __name__ == "__main__":
     arg_dict = configure(sys.argv, os_types.keys())
 
     ####
-    # dependent on existing folders
+    # Go to the parent path of this script
     ####
-    hostname = arg_dict['vm_name']
-    # Increas the count while project exists
-    while os.path.exists(vm_name):
-       vm_name = '{}{:d}'.format(hostname, count)
-       count += 1
-    # Set the project file
-    arg_dict['vm_name'] = vm_name
+    stack_path = inspect.stack()[0][1]
+    script_path = os.path.dirname(os.path.abspath(stack_path))
+    parent_path = os.path.abspath(os.path.join(script_path, '..'))
+    root_path = os.path.basename(script_path)
+    # move to parent of this script
+    os.chdir(parent_path)
 
     ####
     # dependent on os type
@@ -99,13 +100,16 @@ if __name__ == "__main__":
     arg_dict['del'] = '<bs>'*84
 
     ####
-    # Go to the parent path of this script
+    # dependent on existing folders
     ####
-    script_path = os.path.dirname(inspect.stack()[0][1])
-    parent_path = os.path.abspath(os.path.join(script_path, '..'))
-    root_path = os.path.basename(script_path)
-    # move to parent of this script
-    os.chdir(parent_path)
+    hostname = arg_dict['vm_name']
+    # Increas the count while project exists
+    while os.path.exists(vm_name):
+       vm_name = '{}{:d}'.format(hostname, count)
+       count += 1
+    # Set the project file
+    arg_dict['vm_name'] = vm_name
+
     ####
     # get all the path values needed for configuration 
     ####
@@ -113,12 +117,28 @@ if __name__ == "__main__":
     template_file = os.path.join(root_path, 'template.json')
     pack_file = os.path.join(root_path, hostname + '_pack.json')
     seed_file = os.path.join(root_path, hostname + '_seed.cfg')
+    bash_path = os.path.join(root_path, arg_dict['bash'])
+
+    # Store the root path in template
+    arg_dict['seed_cfg'] = seed_file
+
+    # Format with the arguments
+    def arg_format(placeholder):
+        return placeholder.format(**arg_dict)
+
+    # Append extra bash commands:
+    def add_bash(d_template, bash_path):
+        # Get all the commands run on creation
+        all_bash = d_template['provisioners'][0]['inline']
+        # Load bash file
+        with open(bash_path, 'r') as f_bash:
+            # Add bash file to all bash commands
+            all_bash += f_bash.read().splitlines()
+
     ####
     # write a new json package from template
     ####
-    # Store the root path in template
-    arg_dict['seed_cfg'] = seed_file
-    print parent_path
+
     # Read the template file
     with open(template_file, 'r') as f_template:
         # Create the new pack file
@@ -127,8 +147,14 @@ if __name__ == "__main__":
             d_template = json.load(f_template)
             # Load and format variables as string
             pre_var_str = json.dumps(d_template['variables'])
-            new_var_str = pre_var_str[1:-1].format(**arg_dict)
+            new_var_str = arg_format(pre_var_str[1:-1])
             new_var_str = '{{{}}}'.format(new_var_str)
+            ####
+            # If extra bash commands given
+            ####
+            if arg_dict['bash'] and os.path.exists(bash_path):
+                # Add the commands to the template
+                add_bash(d_template, bash_path)
             # Store variables in new template
             new_vars = json.loads(new_var_str)
             d_template['variables'].update(new_vars)

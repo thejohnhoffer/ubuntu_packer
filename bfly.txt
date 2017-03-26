@@ -1,0 +1,10 @@
+sudo apt-get -y install virtualenv
+sudo apt-get -y install python-pip
+cd & mkdir repo & cd repo
+git clone https://github.com/Rhoana/butterfly.git
+mkdir ~/env & virtualenv ~/env/butterfly
+source ~/env/butterfly/bin/activate
+git checkout update_v2
+pip install -U pip
+pip install -r requirements.txt
+pip install -e .
