@@ -84,10 +84,9 @@
     "provisioners": [{
         "type": "shell",
         "inline": [
-            "echo {{user `ssh_pass`}} | sudo -S cd",
-            "sudo rm -f ~/VBoxGuestAdditions.iso",
+            "echo {{user `ssh_pass`}} | sudo -S rm -f ~/VBoxGuestAdditions.iso",
             "sudo usermod -G vboxsf -a $(whoami)",
-            "sudo -S ln -s /meda/$(whoami)/sf_data data"
+            "sudo -S ln -s /meda/$(whoami)/sf_data ~/data"
         ]
     }]
 }

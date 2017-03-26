@@ -52,8 +52,14 @@ def configure(argv,os_types):
     # Restrict the os type to Ubuntu or Ubuntu_64
     parsed.os = parsed.os if parsed.os in os_types else os_types[0]
     # Expand to the full path from relative or user paths
-    parsed.data_path = os.path.expanduser(parsed.data_path)
-    parsed.data_apth = parsed.data_path.replace(' ','\ ')
+    def clean_path(path):
+        if not path:
+            return False
+        relative = os.path.expanduser(parsed.data_path)
+        return os.path.abspath(relative).replace(' ','\ ')
+    # Clean the data and the command paths
+    parsed.data_path = clean_path(parsed.data_path)
+    parsed.bash = clean_path(parsed.bash)
     return vars(parsed)
 
 if __name__ == "__main__":
@@ -117,7 +123,6 @@ if __name__ == "__main__":
     template_file = os.path.join(root_path, 'template.json')
     pack_file = os.path.join(root_path, hostname + '_pack.json')
     seed_file = os.path.join(root_path, hostname + '_seed.cfg')
-    bash_path = os.path.join(root_path, arg_dict['bash'])
 
     # Store the root path in template
     arg_dict['seed_cfg'] = seed_file
@@ -152,7 +157,8 @@ if __name__ == "__main__":
             ####
             # If extra bash commands given
             ####
-            if arg_dict['bash'] and os.path.exists(bash_path):
+            bash_path = arg_dict['bash']
+            if bash_path and os.path.exists(bash_path):
                 # Add the commands to the template
                 add_bash(d_template, bash_path)
             # Store variables in new template

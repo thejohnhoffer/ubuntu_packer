@@ -5,7 +5,8 @@
 Go to the right directory and unpack this code:
 
 ```baah
-cd & cd VirtualBox\ Vms & \
+cd
+cd VirtualBox\ VMs
 git clone https://github.com/thejohnhoffer/ubuntu_packer
 ```
 
@@ -22,7 +23,7 @@ Packer tells you it's _Downloading or copying ISO_, _Download progress: 100%_, _
 Once you see the final message, __Build 'virtualbox-iso' finished__, power up the machine and connect to it with SSH.
 
 ```bash
-VBoxHeadless --startvm butterfly0 & \
+VBoxHeadless --startvm butterfly0 &
 ssh -p 2424 butterfly@localhost
 ```
 
