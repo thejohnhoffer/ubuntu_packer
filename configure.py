@@ -55,7 +55,7 @@ def configure(argv,os_types):
     def clean_path(path):
         if not path:
             return False
-        relative = os.path.expanduser(parsed.data_path)
+        relative = os.path.expanduser(path)
         return os.path.abspath(relative).replace(' ','\ ')
     # Clean the data and the command paths
     parsed.data_path = clean_path(parsed.data_path)
@@ -113,8 +113,9 @@ if __name__ == "__main__":
     while os.path.exists(vm_name):
        vm_name = '{}{:d}'.format(hostname, count)
        count += 1
-    # Set the project file
+    # Set the project files
     arg_dict['vm_name'] = vm_name
+    arg_dict['ovf_name'] = os.path.join(vm_name,'ovf')
 
     ####
     # get all the path values needed for configuration 

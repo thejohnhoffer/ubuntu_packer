@@ -29,7 +29,12 @@ ssh -p 2424 butterfly@localhost
 
 The username and password default to the first word passed to `configure.py`, in this case `butterfly`. You can configure a different username with the `-u` flag or the password with the `-p` flag. The complete list of parameters is given below. You _can even pass a filename_ with __a list of bash commands__ to _run right after_ the creation of the VM.
 
-Once you're in the home directory of the virtual machine, you should be able to type `ls data` to view and edit the contents of the given path (here, we use `~/huge`) on your host machine. 
+Once in the new VM, mount the shared folder once and for all
+```bash
+sudo mount -t vboxsf data ~/data
+```
+
+In the new VM, `ls ~/data` to view and edit the contents of the given path (here, we use `~/huge`) on your host machine. 
 
 ## All parameters:
 

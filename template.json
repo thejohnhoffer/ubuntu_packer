@@ -3,6 +3,7 @@
         "root_path": ".",
         "ssh_port": "{ssh}",
         "vm_name": "{vm_name}",
+        "ovf_name": "{ovf_name}",
         "iso_host": "{iso_host}",
         "iso_file": "{iso_file}",
         "iso_md5sum": "{iso_sum}",
@@ -21,9 +22,10 @@
         "disk_size": 10000,
         "keep_registered": true,
         "type": "virtualbox-iso",
+        "ssh_wait_timeout": "600m",
         "vm_name": "{{user `vm_name`}}",
-        "output_directory": "{{user `vm_name`}}_ovf",
         "guest_os_type": "{{user `ubuntu_type`}}",
+        "output_directory": "{{user `ovf_name`}}",
 
         "vboxmanage": [
             ["modifyvm", "{{.Name}}", "--vram", "32"],
@@ -42,11 +44,9 @@
                 "--name",
                 "data",
                 "--hostpath",
-                "{{user `data_path`}}",
-                "--automount"
+                "{{user `data_path`}}"
             ]
         ],
-        "ssh_wait_timeout": "600m",
 
         "iso_urls": [
             "{{user `iso_file`}}",
@@ -84,9 +84,10 @@
     "provisioners": [{
         "type": "shell",
         "inline": [
-            "echo {{user `ssh_pass`}} | sudo -S rm -f ~/VBoxGuestAdditions.iso",
-            "sudo usermod -G vboxsf -a $(whoami)",
-            "sudo -S ln -s /meda/$(whoami)/sf_data ~/data"
+            "echo {{user `ssh_pass`}} | sudo -S mkdir /mnt/dvd",
+            "sudo mount VBoxGuestAdditions.iso /mnt/dvd",
+            "sudo sh /mnt/dvd/VBoxLinuxAdditions.run",
+            "mkdir data & sudo mount -t vboxsf data data"
         ]
     }]
 }
