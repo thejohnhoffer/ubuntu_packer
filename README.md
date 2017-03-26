@@ -34,7 +34,7 @@ Once in the new VM, mount the shared folder once and for all
 sudo mount -t vboxsf data ~/data
 ```
 
-In the new VM, `ls ~/data` to view and edit the contents of the given path (here, we use `~/huge`) on your host machine. 
+In the new VM, `ls ~/data` gives all in the shared path (here, we use `~/huge`) from the host machine. 
 
 ## All parameters:
 
