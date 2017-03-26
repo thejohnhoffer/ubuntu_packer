@@ -2,9 +2,12 @@
 
 - Install a packaged [virtualbox][virtualbox] on your Linux, MacOS, or Windows server.
 
-- Enter `cd & cd VirtualBox\ Vms` in your interactive shell.
+Go to the right directory and unpack this code:
 
-- Clone this into that folder with `git clone https://github.com/thejohnhoffer/ubuntu_packer`
+```baah
+cd & cd VirtualBox\ Vms
+git clone https://github.com/thejohnhoffer/ubuntu_packer
+```
 
 ## Running configure.py
 
