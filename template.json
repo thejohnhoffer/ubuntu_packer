@@ -1,0 +1,85 @@
+{
+    "variables": {
+        "root_path": ".",
+        "ssh_port": "{ssh}",
+        "vm_name": "{vm_name}",
+        "iso_host": "{iso_host}",
+        "iso_file": "{iso_file}",
+        "iso_md5sum": "{iso_sum}",
+        "data_path": "{data_path}",
+        "seed_cfg": "{seed_cfg}",
+        "ubuntu_type": "{os}",
+        "ssh_name": "{user}",
+        "ssh_pass": "{pass}",
+        "n_core": "{cores}",
+        "meg_ram": "{ram}",
+        "del": "{del}"
+    },
+
+    "builders": [{
+        "headless": true,
+        "disk_size": 10000,
+        "keep_registered": true,
+        "type": "virtualbox-iso",
+        "vm_name": "{{user `vm_name`}}",
+        "output_directory": "{{user `vm_name`}}_ovf",
+        "guest_os_type": "{{user `ubuntu_type`}}",
+
+        "vboxmanage": [
+            ["modifyvm", "{{.Name}}", "--vram", "32"],
+            ["modifyvm", "{{.Name}}", "--memory", "{{user `meg_ram`}}"],
+            ["modifyvm", "{{.Name}}", "--cpus", "{{user `n_core`}}"],
+            [
+                "modifyvm",
+                "{{.Name}}",
+                "--natpf1",
+                "ssh_port,tcp,,{{user `ssh_port`}},,22"
+            ],
+            [
+                "sharedfolder",
+                "add",
+                "{{.Name}}",
+                "--name",
+                "host_data",
+                "--hostpath",
+                "{{user `data_path`}}",
+                "--automount"
+            ]
+        ],
+        "ssh_wait_timeout": "600m",
+
+        "iso_urls": [
+            "{{user `iso_file`}}",
+            "http://{{user `iso_host`}}/{{user `iso_file`}}"
+        ],
+        "iso_checksum": "{{user `iso_md5sum`}}",
+        "iso_checksum_type": "md5",
+
+        "http_directory" : "{{user `root_path`}}",
+
+        "ssh_username": "{{user `ssh_name`}}",
+        "ssh_password": "{{user `ssh_pass`}}",
+
+        "shutdown_command": "echo {{user `ssh_pass`}} | sudo -S shutdown -P now",
+        "guest_additions_mode": "attach",
+        "boot_command" : [
+            "<enter><wait><f6><esc>",
+            "{{user `del`}}",
+            "/install/vmlinuz",
+            " auto",
+            " fb=false",
+            " locale=en_US.UTF-8",
+            " kbd-chooser/method=us",
+            " keyboard-configuration/layout=USA",
+            " keyboard-configuration/variant=USA",
+            " console-setup/ask_detect=false",
+            " debconf/frontend=noninteractive",
+            " hostname={{user `vm_name`}}",
+            " domain={{user `vm_name`}}",
+            " initrd=/install/initrd.gz",
+            " url={{.HTTPIP}}:{{.HTTPPort}}/{{user `seed_cfg`}}",
+            " -- <wait>",
+            "<enter><wait>"
+        ]
+    }]
+}
