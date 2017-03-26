@@ -6,7 +6,9 @@
 
 - Clone this into that folder with `git clone https://github.com/thejohnhoffer/ubuntu_packer`
 
-Now, make an Ubuntu VM called _butterfly0_ with data from the '~/huge' folder on your host machine. When it's all done, you'll be able to _ssh_ into _butterfly0_ on port __2424__. The name of the VM always ends with a number to ensure uniqueness.
+## Running configure.py
+
+In the code block below, we'll make an example Ubuntu VM called _butterfly0_ with data from the __~/huge__ folder on our host machine. When it's all done, we can _ssh_ into __butterfly0__ on port __2424__. Just replace _butterfly_ with the base name for your VM, and replace _~/huge_ with the path to the folder you want to share with your VM.
 
 ```bash
 python ubuntu_packer/configure.py butterfly ~/huge -s 2424
