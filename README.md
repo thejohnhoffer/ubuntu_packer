@@ -14,7 +14,7 @@ python ubuntu_packer/configure.py butterfly ~/huge -s 2424
 
 After _Downloading or copying ISO_, _Download progress: 100%_, _Executing custom VBoxManage commands..._, _Starting the virtual machine..._, _Waiting 10s for boot..._, and _Typing the boot command..._, you will see __Waiting for SSH to become available__ for roughly ten minutes while packer installs Ubuntu in the new VM.
 
-Once you see the final message, __Build 'virtualbox-iso' finished.__, you can start up the machine and connect to it with SSH.
+Once you see the final message, __Build 'virtualbox-iso' finished__, you can start up the machine and connect to it with SSH.
 
 ```bash
 VBoxHeadless --startvm butterfly0 &
@@ -22,6 +22,8 @@ ssh -p 2424 butterfly@localhost
 ```
 
 The username and password default to the name of the virtual machine (without the number). You can change the username with the `-u` flag or the password with the `-p` flag. The complete list of parameters is given below. You can even pass a filename (within the `ubuntu_packer` directory) to use as list of bash commands to run right after the creation of the VM.
+
+Once you're in the home directory of the virtual machine, you should be able to type `ls data` to view and edit the contents of the given path `~/huge` on your host machine. 
 
 ## All parameters:
 
