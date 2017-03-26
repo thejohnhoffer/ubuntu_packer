@@ -58,6 +58,6 @@ optional arguments:
 
 - If you need to start over, delete the vm `VBoxManage unregistervm vm_name --delete`
 
-Where `vm_name` is the name of the VM including the number, ie butterfly0.
+Where `vm_name` is the name of the VM including the number, ie `butterfly0`.
 
 [virtualbox]: https://www.virtualbox.org/wiki/Downloads
