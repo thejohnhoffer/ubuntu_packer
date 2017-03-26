@@ -21,9 +21,9 @@ VBoxHeadless --startvm butterfly0 &
 ssh -p 2424 butterfly@localhost
 ```
 
-The username and password default to the name of the virtual machine (without the number). You can change the username with the `-u` flag or the password with the `-p` flag. The complete list of parameters is given below. You can even pass a filename (within the `ubuntu_packer` directory) to use as list of bash commands to run right after the creation of the VM.
+The username and password default to the first word passed to `configure.py`, in this case `butterfly`. You can change the username with the `-u` flag or the password with the `-p` flag. The complete list of parameters is given below. You can even pass a filename (within the `ubuntu_packer` directory) to use as list of bash commands to run right after the creation of the VM.
 
-Once you're in the home directory of the virtual machine, you should be able to type `ls data` to view and edit the contents of the given path `~/huge` on your host machine. 
+Once you're in the home directory of the virtual machine, you should be able to type `ls data` to view and edit the contents of the given path (here, we use `~/huge`) on your host machine. 
 
 ## All parameters:
 
