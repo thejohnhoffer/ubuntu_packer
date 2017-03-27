@@ -12,30 +12,61 @@ git clone https://github.com/thejohnhoffer/ubuntu_packer
 
 ## Running configure.py
 
-In the code block below, we'll make an example Ubuntu VM called _butterfly0_ with data from the __~/huge__ folder on our host machine. When it's all done, we can _ssh_ into __butterfly0__ on port __2424__. Just replace _butterfly_ with the base name for your VM, and replace _~/huge_ with the path to the folder you want to share with your VM.
+The code block below makes an example Ubuntu VM sharing data from the __~/huge__ folder on our host machine.
+
+### Option 1: forward ssh port
+
+This machine will be accessible from anywhere with a custom password.
 
 ```bash
 cd ubuntu_packer
-python configure.py butterfly ~/huge -f 2424,22
+python configure.py butterfly ~/huge -f 2424,22 -p mySecret1
 ```
+
+|                      |            |                                |
+|----------------------|------------|--------------------------------|
+| host ssh port        | 2424       | Routes to guest ssh port (22)  |
+| host ipv4 address    | N/A        | This example gives no ipv4     |
+| virtual machine name | butterfly0 | Number added to `vm_name`      |
+| username             | butterfly  | Defaults to `vm_name`          |
+| password             | mySecret1  | The password is set by -p flag |
+
+### Option 2: local ip address
+
+This machine will be accessible from the host machine.
+
+```bash
+cd ubuntu_packer
+python configure.py butterfly ~/huge -i 192.168.133.7
+```
+
+|                      |               |                            |
+|----------------------|---------------|----------------------------|
+| host ssh port        | N/A           | This example gives no port |
+| host ipv4 address    | 192.168.133.7 | Must start with 192.168    |
+| virtual machine name | butterfly0    | Number added to `vm_name`  |
+| username             | butterfly     | Defaults to `vm_name`      |
+| password             | butterfly     | Defaults to `vm_name`      |
+
+## After running configure.py
 
 Packer tells you it's _Downloading or copying ISO_, _Download progress: 100%_, _Executing custom VBoxManage commands..._, _Starting the virtual machine..._, _Waiting 10s for boot..._, and _Typing the boot command..._. It will only tell you it's __Waiting for SSH to become available__ for roughly ten minutes while packer installs Ubuntu in the new VM.
 
-Once you see the final message, __Build 'virtualbox-iso' finished__, power up the machine and connect to it with SSH.
+Once you see the final message, __Build 'virtualbox-iso' finished__,  connect to it with SSH.
 
-```bash
-VBoxHeadless --startvm butterfly0 &
-ssh -p 2424 butterfly@localhost
-```
 
-The username and password default to the first word passed to `configure.py`, in this case `butterfly`. You can configure a different username with the `-u` flag or the password with the `-p` flag. The complete list of parameters is given below. You _can even pass a filename_ with __a list of bash commands__ to _run right after_ the creation of the VM.
+- If you used `-f 2424,22` for port forwarding, use `ssh -p 2424 butterfly@localhost`
+- If you used `-i 192.168.133.7` for a local ip, use `ssh butterfly@192.168.133.7`
 
-Once in the new VM, mount the shared folder once and for all
+Then enter the password which is given by `-p` or defaults to the username.
+
+The first time on the new VM, mount the shared folder exactly like this.
+
 ```bash
 sudo mount -t vboxsf data ~/data
 ```
 
-In the new VM, `ls ~/data` gives all in the shared path (here, we use `~/huge`) from the host machine. 
+In the new VM, `ls ~/data` shows the shared contents from the host machine path. 
 
 ## All parameters:
 
