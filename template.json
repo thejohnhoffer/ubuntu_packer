@@ -70,6 +70,7 @@
             " domain={{user `vm_name`}}",
             " initrd=/install/initrd.gz",
             " url={{.HTTPIP}}:{{.HTTPPort}}/{{user `seed_cfg`}}",
+            " netcfg/choose_interface=enp0s3",
             " -- <wait>",
             "<enter><wait>"
         ]

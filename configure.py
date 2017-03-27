@@ -173,17 +173,18 @@ no GUEST port 22: \n{}
         # Get all strings needed for networking
         ip_root = '.'.join(net_ip.split('.')[:-1])
         networks = [
-            "        network         {}".format(net_ip),
-            "        address         {}".format(guest_ip),
-            "        broadcast       {}.255".format(ip_root),
-            "        netmask         255.255.255.0".format(ip_root),
+            '',
+            'auto enp0s8',
+            'iface enp0s8 inet static',
+            '        network         {}'.format(net_ip),
+            '        address         {}'.format(guest_ip),
+            '        broadcast       {}.255'.format(ip_root),
+            '        netmask         255.255.255.0'.format(ip_root),
         ]
-        command = "sudo printf '\n\n%s\n%s\n%s\n%s\n%s\n%s' {} >> /etc/network/interfaces"
-        add_txt = "'auto enp0s8' 'iface enp0s8 inet static' '{}' '{}' '{}' '{}'"
         # Activate the network
-        activate = command.format(add_txt.format(*networks))
-        check_up = 'sudo ifup enp0s8'
-        all_bash += [activate, check_up]
+        activate = 'sudo sh -c \'echo "{0}" >> /etc/network/interfaces\''
+        all_bash += map(activate.format, networks)
+        all_bash += ['sudo ifup enp0s8']
 
     # Append forwarded port
     def fwd_port(port_string):
