@@ -1,9 +1,7 @@
 {
     "variables": {
         "root_path": ".",
-        "ssh_port": "{ssh}",
         "vm_name": "{vm_name}",
-        "ovf_name": "{ovf_name}",
         "iso_host": "{iso_host}",
         "iso_file": "{iso_file}",
         "iso_md5sum": "{iso_sum}",
@@ -20,23 +18,18 @@
     "builders": [{
         "headless": true,
         "disk_size": 10000,
+        "skip_export": true,
         "keep_registered": true,
         "type": "virtualbox-iso",
         "ssh_wait_timeout": "600m",
         "vm_name": "{{user `vm_name`}}",
         "guest_os_type": "{{user `ubuntu_type`}}",
-        "output_directory": "{{user `ovf_name`}}",
+        "output_directory": "{{user `vm_name`}}",
 
         "vboxmanage": [
             ["modifyvm", "{{.Name}}", "--vram", "32"],
             ["modifyvm", "{{.Name}}", "--memory", "{{user `meg_ram`}}"],
             ["modifyvm", "{{.Name}}", "--cpus", "{{user `n_core`}}"],
-            [
-                "modifyvm",
-                "{{.Name}}",
-                "--natpf1",
-                "ssh_port,tcp,,{{user `ssh_port`}},,22"
-            ],
             [
                 "sharedfolder",
                 "add",
@@ -87,7 +80,8 @@
             "echo {{user `ssh_pass`}} | sudo -S mkdir /mnt/dvd",
             "sudo mount VBoxGuestAdditions.iso /mnt/dvd",
             "sudo sh /mnt/dvd/VBoxLinuxAdditions.run",
-            "mkdir data & sudo mount -t vboxsf data data"
+            "mkdir data & sudo umount /mnt/dvd",
+            "sudo rm VBoxGuestAdditions.iso"
         ]
     }]
 }

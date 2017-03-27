@@ -15,7 +15,8 @@ git clone https://github.com/thejohnhoffer/ubuntu_packer
 In the code block below, we'll make an example Ubuntu VM called _butterfly0_ with data from the __~/huge__ folder on our host machine. When it's all done, we can _ssh_ into __butterfly0__ on port __2424__. Just replace _butterfly_ with the base name for your VM, and replace _~/huge_ with the path to the folder you want to share with your VM.
 
 ```bash
-python ubuntu_packer/configure.py butterfly ~/huge -s 2424
+cd ubuntu_packer
+python configure.py butterfly ~/huge -f 2424,22
 ```
 
 Packer tells you it's _Downloading or copying ISO_, _Download progress: 100%_, _Executing custom VBoxManage commands..._, _Starting the virtual machine..._, _Waiting 10s for boot..._, and _Typing the boot command..._. It will only tell you it's __Waiting for SSH to become available__ for roughly ten minutes while packer installs Ubuntu in the new VM.
@@ -52,11 +53,13 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -o OS, --os OS        Ubuntu or Ubuntu_64 (Ubuntu_64)
-  -s SSH, --ssh SSH     port >1024 for ssh server (2222)
+  -f HOST,GUEST, --fwd HOST,GUEST
+                        use once for each pair of host,guest ports
   -r RAM, --ram RAM     Total megabytes of RAM (1024)
   -c CORES, --cores CORES
                         Number of processor cores (1)
   -b BASH, --bash BASH  Path to bash script to run when made
+  -i IP, --ip IP        Local IPV4 address, if any
   -p PASS, --pass PASS  password: overrides vm_name
   -u USER, --user USER  username: overrides vm_name
 ```
