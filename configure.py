@@ -60,7 +60,7 @@ def configure(argv,os_types):
         if not path:
             return False
         relative = os.path.expanduser(path)
-        return os.path.abspath(relative).replace(' ','\ ')
+        return os.path.abspath(relative)
     # Clean the data and the command paths
     parsed.data_path = clean_path(parsed.data_path)
     parsed.bash = clean_path(parsed.bash)
@@ -89,6 +89,7 @@ if __name__ == "__main__":
 
     # Get the parse command line arguments
     arg_dict = configure(sys.argv, os_types.keys())
+    arg_dict['data_path'] = arg_dict['data_path'].replace(' ','\ ')
     guest_ip = arg_dict['ip']
 
     # If port forwarding
