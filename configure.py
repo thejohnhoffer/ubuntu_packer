@@ -70,14 +70,14 @@ if __name__ == "__main__":
     # Map os type arguments
     os_types = {
         'Ubuntu_64': {
-            'host': 'releases.ubuntu.com/16.04.2',
-            'iso': 'ubuntu-16.04.2-server-amd64.iso',
-            'sum': '2bce60d18248df9980612619ff0b34e6',
+            'host': 'releases.ubuntu.com/10.04.0',
+            'iso': 'ubuntu-10.04-server-amd64.iso',
+            'sum': '8ee25c78f4c66610b6872a05ee9ad81b',
         },
         'Ubuntu': {
-            'host': 'releases.ubuntu.com/16.04.2',
-            'iso': 'ubuntu-16.04.2-server-i386.iso',
-            'sum': 'c32ba78bf6bdae6627b1e717d33eb7ae',
+            'host': 'releases.ubuntu.com/10.04.0',
+            'iso': 'ubuntu-10.04-server-i386.iso',
+            'sum': '15342636441181f7a19c65984b44e24c',
         },
     }
     count = 0
